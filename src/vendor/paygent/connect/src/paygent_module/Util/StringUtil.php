@@ -89,7 +89,7 @@ class StringUtil{
 			}
 		} else {
 			for ($i = 0; $i < strlen($str); $i++) {
-				$c = $str{$i};
+				$c = $str[$i];
 				$list[] = "" . $c;
 			}
 		}
