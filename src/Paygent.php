@@ -1,10 +1,10 @@
 <?php
 
-namespace Hoancaretllc\Paygent;
+namespace Vuthihoan\Paygent;
 
 require __DIR__.'/vendor/autoload.php';
 
-use Hoancaretllc\Paygent\Exceptions\InvalidArgumentException;
+use Vuthihoan\Paygent\Exceptions\InvalidArgumentException;
 use PaygentModule\System\PaygentB2BModule;
 
 date_default_timezone_set('Asia/Tokyo');

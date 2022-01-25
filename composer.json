@@ -1,23 +1,23 @@
 {
-    "name": "hoancaretllc/paygent",
+    "name": "vuthihoan/paygent",
     "description": "A paygent SDK.",
     "license": "MIT",
     "authors": [
         {
-            "name": "hoancaretllc",
+            "name": "vuthihoan",
             "email": "hoan@caretllc.com"
         }
     ],
     "require": {},
     "autoload": {
         "psr-4": {
-            "Hoancaretllc\\Paygent\\": "./src"
+            "Vuthihoan\\Paygent\\": "./src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Hoancaretllc\\Paygent\\ServiceProvider"
+                "Vuthihoan\\Paygent\\ServiceProvider"
             ]
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoancaretllc\Paygent\Exceptions;
+namespace Vuthihoan\Paygent\Exceptions;
 
 class Exception extends \Exception
 {

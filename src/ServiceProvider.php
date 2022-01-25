@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoancaretllc\Paygent;
+namespace Vuthihoan\Paygent;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
