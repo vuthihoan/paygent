@@ -96,6 +96,109 @@ class Paygent
             return $response;
         }
     }
+    
+       /*
+     * Pay by credit card
+     * @param array $params Payment data
+     * @param int split_count number of instalments
+     * @param string card_token token
+     * @param string trading_id order number
+     * @param string payment_amount amount
+     * @return array
+     */
+    public function paySendSubcribe($split_count, $card_token, $trading_id, $payment_amount, $cycle,
+                                    $customer_id, $customer_card_id, $timing, $first_executed,
+                                    $end_scheduled)
+    {
+        $payment_class = '1' === $split_count ? 10 : 61;
+        $this->paygent->reqPut('payment_class', $payment_class);
+        $this->paygent->reqPut('split_count', $split_count);
+        $this->paygent->reqPut('card_token', $card_token);
+        $this->paygent->reqPut('trading_id', $trading_id);
+        $this->paygent->reqPut('customer_id', $customer_id);
+        $this->paygent->reqPut('customer_card_id', $customer_card_id);
+        $this->paygent->reqPut('amount', $payment_amount);
+        $this->paygent->reqPut('cycle', $cycle);
+        $this->paygent->reqPut('timing', $timing);
+        $this->paygent->reqPut('first_executed', $first_executed);
+        $this->paygent->reqPut('end_scheduled', $end_scheduled);
+
+
+        // Payment Types
+        $this->paygent->reqPut('telegram_kind', '280');
+        // send
+        $result = $this->paygent->post();
+
+        // 1 request failed, 0 request succeeded
+        if (true !== $result) {
+            return ['code' => 1, 'result' => $result];
+        } else {
+            // After the request is successful, directly confirm the payment
+            if ($this->paygent->hasResNext()) {
+                $res = $this->paygent->resNext();
+                return $res;
+                $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
+                // Credit card confirmation payment
+                $this->paygent->reqPut('telegram_kind', '280');
+            }
+            // send
+            $result = $this->paygent->post();
+
+            if (true !== $result) {
+                return ['code' => 1, 'result' => $result];
+            }
+
+            $response = [
+                'code' => 0,
+                'status' => $this->paygent->getResultStatus(),
+                'pay_code' => $this->paygent->getResponseCode(), // 0 for success, 1 for failure, others are specific error codes
+                //'running_id' => $res['running_id'],
+                'detail' => $this->iconv_parse($this->paygent->getResponseDetail()),
+                'res' => $res,
+            ];
+
+            return $response;
+        }
+    }
+
+    public function add_stored_user_data($trading_id, $customer_id, $card_number, $card_valid_term)
+    {
+        $this->paygent->reqPut('trading_id', $trading_id);
+        $this->paygent->reqPut('customer_id', $customer_id);
+        $this->paygent->reqPut('card_number', $card_number);
+        $this->paygent->reqPut('card_valid_term',$card_valid_term);
+
+        $this->paygent->reqPut('telegram_kind','025');//Add Store User infomation
+
+        $result = $this->paygent->post();
+
+        if (true !== $result) {
+            return ['code' => 1, 'result' => $result];
+        } else {
+            // request succeeded
+            if (!$this->paygent->hasResNext()) {
+                return ['code' => 1, 'result' => $result];
+            }
+            $res = $this->paygent->resNext();
+            $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
+                // Credit card confirmation payment
+            $this->paygent->reqPut('telegram_kind', '280');
+
+            if (true !== $result) {
+                return ['code' => 1, 'result' => $result];
+            }
+
+            $response = [
+                'code' => 0,
+                'status' => $this->paygent->getResultStatus(),
+                'pay_code' => $this->paygent->getResponseCode(), // 0 for success, 1 for failure, others are specific error codes
+                'detail' => $this->iconv_parse($this->paygent->getResponseDetail()),
+                "customer_card_id" => $res['customer_card_id']
+		];
+
+            return $response;
+        }
+    }
 
     /*
      * post-pay request
