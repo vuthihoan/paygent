@@ -81,24 +81,24 @@ class CSVTokenizer {
 			} else {
 				// 囲い文字があるかチェックする
 				if ($this->itemEnvelope != null
-					&& $temp{0} == $this->itemEnvelope) {
+					&& $temp[0] == $this->itemEnvelope) {
 					$existEnvelope = true;
 				}
 
 				$isData = false;
 				for ($i = 0; $i < strlen($temp);) {
-					$chrTmp = $temp{$i};
+					$chrTmp = $temp[$i];
 					if ($existEnvelope == true
-						&& $temp{$i} == $this->itemEnvelope) {
+						&& $temp[$i] == $this->itemEnvelope) {
 						$i++;
 						if ($isData == true) {
 							if (($i < strlen($temp))
 								&& ($this->itemEnvelope != null
-									&& $temp{$i}
+									&& $temp[$i]
 										== $this->itemEnvelope)) {
 								/* 囲み文字が２つ続けて現れたときは、
 								 * 文字データとして取得する */
-								$work .= $temp{$i++};
+								$work .= $temp[$i++];
 							} else {
 								$isData = !$isData;
 							}
@@ -106,7 +106,7 @@ class CSVTokenizer {
 							$isData = !$isData;
 						}
 					} else {
-						$work .= $temp{$i++};
+						$work .= $temp[$i++];
 					}
 				}
 			}
@@ -140,7 +140,7 @@ class CSVTokenizer {
 
 		// 囲み文字の有無判定
 		if ($this->itemEnvelope != null
-			&& $this->line{$start} == $this->itemEnvelope) {
+			&& $this->line[$start] == $this->itemEnvelope) {
 			$existEnvelope = true;
 		}
 
@@ -148,7 +148,7 @@ class CSVTokenizer {
 
 		while ($end < $this->maxPos) {
 			// １文字読み込む
-			$ch = $this->line{$end};
+			$ch = $this->line[$end];
 			// 文字の判定
 			if ($state == false
 				&& $this->separator != null
@@ -180,7 +180,7 @@ class CSVTokenizer {
 			return null;
 		}
 		for ($i = 0; $i < strlen($str); ++$i) {
-			if ($str{$i} == $this->app['const']['CSVTokenizer__DEF_SEPARATOR']) {
+			if ($str[$i] == $this->app['const']['CSVTokenizer__DEF_SEPARATOR']) {
 
 				return "\"" . $str . "\"";
 			}
