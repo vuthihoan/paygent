@@ -173,14 +173,14 @@ class CSVWriter {
         $flg = false;
         $buf = "";
         for ($i = 0; $i < strlen($str); $i++) {
-            if ($str{$i} == $this->envelop) {
+            if ($str[$i] == $this->envelop) {
                 $buf .= $this->envelop;
                 $flg = true;
             }
-            if ($str{$i} == $this->app['const']['CSVTokenizer__DEF_SEPARATOR']) {
+            if ($str[$i] == $this->app['const']['CSVTokenizer__DEF_SEPARATOR']) {
                 $flg = true;
             }
-            $buf .= $str{$i};
+            $buf .= $str[$i];
         }
         return $buf;
     }
