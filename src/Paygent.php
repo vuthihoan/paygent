@@ -136,7 +136,6 @@ class Paygent
             // After the request is successful, directly confirm the payment
             if ($this->paygent->hasResNext()) {
                 $res = $this->paygent->resNext();
-                return $res;
                 $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
                 // Credit card confirmation payment
                 $this->paygent->reqPut('telegram_kind', '280');
@@ -167,8 +166,7 @@ class Paygent
         $this->paygent->reqPut('customer_id', $customer_id);
         $this->paygent->reqPut('card_number', $card_number);
         $this->paygent->reqPut('card_valid_term',$card_valid_term);
-
-        $this->paygent->reqPut('telegram_kind','025');//Add Store User infomation
+        $this->paygent->reqPut('telegram_kind','025');
 
         $result = $this->paygent->post();
 
@@ -176,13 +174,14 @@ class Paygent
             return ['code' => 1, 'result' => $result];
         } else {
             // request succeeded
-            if (!$this->paygent->hasResNext()) {
-                return ['code' => 1, 'result' => $result];
-            }
-            $res = $this->paygent->resNext();
-            $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
+            if ($this->paygent->hasResNext()) {
+                $res = $this->paygent->resNext();
+                $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
                 // Credit card confirmation payment
-            $this->paygent->reqPut('telegram_kind', '280');
+                $this->paygent->reqPut('telegram_kind', '025');
+            }
+            // send
+            $result = $this->paygent->post();
 
             if (true !== $result) {
                 return ['code' => 1, 'result' => $result];
@@ -194,7 +193,46 @@ class Paygent
                 'pay_code' => $this->paygent->getResponseCode(), // 0 for success, 1 for failure, others are specific error codes
                 'detail' => $this->iconv_parse($this->paygent->getResponseDetail()),
                 "customer_card_id" => $res['customer_card_id']
-		];
+                ];
+
+            return $response;
+        }
+    }
+
+    public function user_has_stored_data($trading_id, $customer_id, $card_number, $card_token)
+    {
+        $this->paygent->reqPut('trading_id', $trading_id);
+        $this->paygent->reqPut('customer_id', $customer_id);
+        $this->paygent->reqPut('card_number', $card_number);
+        $this->paygent->reqPut('card_token',$card_token);
+        $this->paygent->reqPut('telegram_kind','027');
+
+        $result = $this->paygent->post();
+
+        if (true !== $result) {
+            return ['code' => 1, 'result' => $result];
+        } else {
+            // request succeeded
+            if ($this->paygent->hasResNext()) {
+                $res = $this->paygent->resNext();
+                $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
+                // Credit card confirmation payment
+                $this->paygent->reqPut('telegram_kind', '027');
+            }
+            // send
+            $result = $this->paygent->post();
+
+            if (true !== $result) {
+                return ['code' => 1, 'result' => $result];
+            }
+
+            $response = [
+                'code' => 0,
+                'status' => $this->paygent->getResultStatus(),
+                'pay_code' => $this->paygent->getResponseCode(), // 0 for success, 1 for failure, others are specific error codes
+                'detail' => $this->iconv_parse($this->paygent->getResponseDetail()),
+                "customer_card_id" => $res['customer_card_id']
+                ];
 
             return $response;
         }
