@@ -107,9 +107,18 @@ class Paygent
      * @return array
      */
     public function paySendSubcribe($split_count, $card_token, $trading_id, $payment_amount, $cycle,
-                                    $customer_id, $customer_card_id, $timing, $first_executed,
+                                    $customer_id, $timing, $first_executed,
                                     $end_scheduled)
     {
+        //
+        $customer_check = $this->user_has_stored_data($customer_id);
+        if (!$customer_check['status'] and $customer_check['pay_code']!='P026') {
+            $customer_card_id = $customer_check['result_array'][0]['customer_card_id'];
+        } else {
+            $stored_user_card_data = $this->add_stored_user_data($customer_id, $card_token);
+            $customer_card_id = $stored_user_card_data['customer_card_id'];
+        }
+
         $payment_class = '1' === $split_count ? 10 : 61;
         $this->paygent->reqPut('payment_class', $payment_class);
         $this->paygent->reqPut('split_count', $split_count);
@@ -146,6 +155,8 @@ class Paygent
             if (true !== $result) {
                 return ['code' => 1, 'result' => $result];
             }
+
+            $res = $this->paygent->resNext();
 
             $response = [
                 'code' => 0,
