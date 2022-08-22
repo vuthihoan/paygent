@@ -107,8 +107,7 @@ class Paygent
      * @return array
      */
     public function paySendSubcribe($split_count, $card_token, $trading_id, $payment_amount, $cycle,
-                                    $customer_id, $timing, $first_executed,
-                                    $end_scheduled)
+                                    $customer_id, $timing, $first_executed)
     {
         //
         $customer_check = $this->user_has_stored_data($customer_id);
@@ -130,8 +129,6 @@ class Paygent
         $this->paygent->reqPut('cycle', $cycle);
         $this->paygent->reqPut('timing', $timing);
         $this->paygent->reqPut('first_executed', $first_executed);
-        $this->paygent->reqPut('end_scheduled', $end_scheduled);
-
 
         // Payment Types
         $this->paygent->reqPut('telegram_kind', '280');
