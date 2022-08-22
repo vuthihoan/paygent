@@ -145,26 +145,14 @@ class Paygent
             // After the request is successful, directly confirm the payment
             if ($this->paygent->hasResNext()) {
                 $res = $this->paygent->resNext();
-                $this->paygent->reqPut('customer_card_id', $res['customer_card_id']);
-                // Credit card confirmation payment
-                $this->paygent->reqPut('telegram_kind', '280');
             }
-            // send
-            $result = $this->paygent->post();
-
-            if (true !== $result) {
-                return ['code' => 1, 'result' => $result];
-            }
-
-            $res = $this->paygent->resNext();
 
             $response = [
                 'code' => 0,
                 'status' => $this->paygent->getResultStatus(),
                 'pay_code' => $this->paygent->getResponseCode(), // 0 for success, 1 for failure, others are specific error codes
-                //'running_id' => $res['running_id'],
-                'detail' => $this->iconv_parse($this->paygent->getResponseDetail()),
-                'res' => $res,
+                'running_id' => $res['running_id'],
+                'detail' => $this->iconv_parse($this->paygent->getResponseDetail())
             ];
 
             return $response;
