@@ -52,14 +52,24 @@ class Paygent
      * @param string payment_amount amount
      * @return array
      */
-    public function paySend($split_count, $card_token, $trading_id, $payment_amount)
+    public function paySend($split_count, $card_token, $customer_id, $trading_id, $payment_amount)
     {
+        $customer_check = $this->user_has_stored_data($customer_id);
+        if (!$customer_check['status'] and $customer_check['pay_code']!='P026') {
+            $customer_card_id = $customer_check['result_array'][0]['customer_card_id'];
+        } else {
+            $stored_user_card_data = $this->add_stored_user_data($customer_id, $card_token);
+            $customer_card_id = $stored_user_card_data['customer_card_id'];
+        }
+
         $this->paygent->reqPut('3dsecure_ryaku', 1);
 
         $payment_class = '1' === $split_count ? 10 : 61;
         $this->paygent->reqPut('split_count', $split_count);
         $this->paygent->reqPut('payment_class', $payment_class);
-        $this->paygent->reqPut('card_token', $card_token);
+        $this->paygent->reqPut('customer_id', $customer_id);
+        $this->paygent->reqPut('customer_card_id', $customer_card_id);
+        // $this->paygent->reqPut('card_token', $card_token);
         $this->paygent->reqPut('trading_id', $trading_id);
         $this->paygent->reqPut('payment_amount', $payment_amount);
 
