@@ -66,12 +66,15 @@ class Paygent
 
         $payment_class = '1' === $split_count ? 10 : 61;
         $this->paygent->reqPut('split_count', $split_count);
-        $this->paygent->reqPut('payment_class', $payment_class);
+        $this->paygent->reqPut('payment_class', 10);
+        $this->paygent->reqPut('stock_card_mode', 1);
         $this->paygent->reqPut('customer_id', $customer_id);
         $this->paygent->reqPut('customer_card_id', $customer_card_id);
         // $this->paygent->reqPut('card_token', $card_token);
         $this->paygent->reqPut('trading_id', $trading_id);
         $this->paygent->reqPut('payment_amount', $payment_amount);
+        $this->paygent->reqPut('payment_id', '');
+
 
         // Payment Types
         $this->paygent->reqPut('telegram_kind', '020');
