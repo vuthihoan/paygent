@@ -61,6 +61,7 @@ class Paygent
             $stored_user_card_data = $this->add_stored_user_data($customer_id, $card_token);
             $customer_card_id = $stored_user_card_data['customer_card_id'];
         }
+        $this->add_stored_user_data($customer_id, $card_token);
 
         $this->paygent->reqPut('3dsecure_ryaku', 1);
 
